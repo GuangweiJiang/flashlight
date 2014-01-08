@@ -7,5 +7,7 @@
     <string name="flash_name">手电筒</string>
     <string name="flash_open">点击打开</string>
     <string name="flash_off">点击关闭</string>
+    <string name="enable_flashlight">程序开启时自动打开手电</string>
+    <string name="app_ver">1.1.0</string>
 
 </resources>

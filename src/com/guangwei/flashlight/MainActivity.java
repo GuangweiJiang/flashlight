@@ -14,7 +14,8 @@
  * 		
  * 
  * Notes:
- * 		
+ * 		v1.1.0, by Guangwei.Jiang@Jan08'14
+ * 		1. Add new feature which allow user to choose if open flash light by default;
  */
 
 package com.guangwei.flashlight;
@@ -25,20 +26,27 @@ import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
 import android.os.Bundle;
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
 import android.view.Window;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 public class MainActivity extends Activity {
 	
 	private static final String TAG = "FlashLight";
-	Camera camera = null;
-	boolean bFlashState = false;
+	public static final String PREF = "flashlight_pref";
+	public static final String PREF_isEnableFlashInit = "isEnableFlashInit";
+	private Camera camera = null;
+	private boolean bFlashState = false;
+	private boolean bEnableFlashInit = false;
 	
 	private TextView textFlashState = null;
+	private CheckBox checkboxEnableFlashInit = null;
 	
 	public static void turnLightOn(Camera mCamera) {
 		try{
@@ -102,8 +110,10 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
                 
         textFlashState = (TextView) findViewById(R.id.textView2);
-        bFlashState = true;
+        checkboxEnableFlashInit = (CheckBox) findViewById(R.id.checkBoxEnableFlashInit);
         
+        restorePrefs();     
+                
         if (bFlashState)
         {
         	turnLightOn(camera);
@@ -137,6 +147,22 @@ public class MainActivity extends Activity {
         	
         }
         );
+        
+        checkboxEnableFlashInit.setOnCheckedChangeListener
+        (new CheckBox.OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
+				SharedPreferences settings = getSharedPreferences(PREF, 0);
+				
+				if (checkboxEnableFlashInit.isChecked()) {
+					settings.edit().putBoolean(PREF_isEnableFlashInit, true).commit();
+				} else {
+					settings.edit().putBoolean(PREF_isEnableFlashInit, false).commit();
+				}					
+			}
+        	
+        });
+        
     }
 
     @Override
@@ -161,4 +187,11 @@ public class MainActivity extends Activity {
     	}
     }
     
+    // Restore preferences
+    private void restorePrefs() {
+    	SharedPreferences settings = getSharedPreferences(PREF, 0);
+    	bEnableFlashInit = settings.getBoolean(PREF_isEnableFlashInit, false);
+    	bFlashState = bEnableFlashInit;
+    	checkboxEnableFlashInit.setChecked(bEnableFlashInit);
+    }
 }

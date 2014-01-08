@@ -29,4 +29,13 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textSize="48sp" />
 
+    <CheckBox
+        android:id="@+id/checkBoxEnableFlashInit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/textView2"
+        android:layout_below="@+id/textView2"
+        android:layout_marginTop="77dp"
+        android:text="@string/enable_flashlight" />
+
 </RelativeLayout>
