@@ -38,4 +38,35 @@
         android:layout_marginTop="77dp"
         android:text="@string/enable_flashlight" />
 
+    <CheckBox
+        android:id="@+id/checkBoxEnableShake"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/checkBoxEnableFlashInit"
+        android:layout_below="@+id/checkBoxEnableFlashInit"
+        android:layout_marginTop="15dp"
+        android:text="@string/enable_shake_trim" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/checkBoxEnableShake"
+        android:layout_marginTop="14dp"
+        android:layout_toRightOf="@+id/checkBoxEnableFlashInit"
+        android:text="@string/app_ver"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/red" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/textView3"
+        android:layout_alignBottom="@+id/textView3"
+        android:layout_alignRight="@+id/checkBoxEnableFlashInit"
+        android:text="@string/ver_string"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/red" />
+
 </RelativeLayout>
