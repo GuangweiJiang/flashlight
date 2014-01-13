@@ -14,6 +14,9 @@
  * 		
  * 
  * Notes:
+ * 		v1.2.3, by Guangwei.Jiang@Jan13'14
+ * 		1. Continue fine tune the Shake feature;
+ * 
  * 		v1.2.2, by Guangwei.Jiang@Jan13'14
  * 		1. Touch screen to turn on/off flash light (the old version can only click the TextView of "Light State");
  * 
@@ -70,8 +73,10 @@ public class MainActivity extends Activity {
 	//检测摇动相关变量
     private long lastTime = 0;
     private long curTime = 0;
-    // 控制时间间隔
-    private int TimeInterval = 200;
+    /// TimeInterval时间间隔内，两次G值均超gravityThreshold，则执行开关灯动作；
+    private int TimeInterval = 100;  
+    // 执行完开关灯动作后，等待TimeDebunce (ms) 后，方可进入下一次G值等待判断；
+    private int TimeDebunce = 2000;
     // 重力加速度阀值
     private int gravityThreshold = 14;
     
@@ -339,8 +344,10 @@ public class MainActivity extends Activity {
 							turnLightOff(camera);
 							textFlashState.setText(R.string.flash_open_shake);
 						}
-					}
+						lastTime = curTime + TimeDebunce;
+					} else {
 					lastTime = curTime;
+					}
 				}
 			}
 		}    	
