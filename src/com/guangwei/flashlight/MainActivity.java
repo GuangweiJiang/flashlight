@@ -65,7 +65,7 @@ public class MainActivity extends Activity {
     private long lastTime = 0;
     private long curTime = 0;
     // 控制时间间隔
-    private int TimeInterval = 400;
+    private int TimeInterval = 200;
     // 重力加速度阀值
     private int gravityThreshold = 14;
     
