@@ -14,6 +14,12 @@
  * 		
  * 
  * Notes:
+ * 		v1.2.2, by Guangwei.Jiang@Jan13'14
+ * 		1. Touch screen to turn on/off flash light (the old version can only click the TextView of "Light State");
+ * 
+ * 		v1.2.1, by Guangwei.Jiang@Jan13'14
+ * 		1. Fine tune the "TimeInterval" of Shake to 200ms;
+ * 
  * 		v1.2.0, by Guangwei.Jiang@Jan09'14
  * 		1. Add new feature which allow user to "shake" to control flash on/off;
  * 		2. Add the version label;
@@ -40,7 +46,7 @@ import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
-import android.view.View;
+import android.view.MotionEvent;
 import android.view.Window;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -119,7 +125,7 @@ public class MainActivity extends Activity {
         	} 
         }
         
-        textFlashState.setOnClickListener(new TextView.OnClickListener()
+        /*textFlashState.setOnClickListener(new TextView.OnClickListener()
         {
 			@Override
 			public void onClick(View arg0) {
@@ -135,7 +141,7 @@ public class MainActivity extends Activity {
 					}
 				}
 			}        	
-        });
+        });*/
         
         checkboxEnableFlashInit.setOnCheckedChangeListener
         (new CheckBox.OnCheckedChangeListener() {
@@ -214,6 +220,28 @@ public class MainActivity extends Activity {
     	} else {  
     		return super.onKeyDown(keyCode, event);  
     	}
+    }
+    
+    @Override
+    public boolean onTouchEvent (MotionEvent event) {
+    	switch (event.getAction()) {
+    	case MotionEvent.ACTION_DOWN:
+    		if (!bEnableShake) {
+				if (!bFlashState) {
+					bFlashState = true;
+					turnLightOn(camera);
+					textFlashState.setText(R.string.flash_off);
+				} else {
+					bFlashState = false;
+					turnLightOff(camera);
+					textFlashState.setText(R.string.flash_open);
+				}
+			}
+    		break;
+    	default:
+    		break;
+    	}
+    	return super.onTouchEvent(event);
     }
     
 	public static void turnLightOn(Camera mCamera) {
