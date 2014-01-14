@@ -14,6 +14,11 @@
  * 		
  * 
  * Notes:
+ * 		v1.2.4, by Guangwei.Jiang@Jan14'14
+ * 		1. Fine tune "gravityThreshold" value to 18;
+ * 		2. Fine tune "TimeDebunce" to 1000ms;
+ * 		3. Unregister "SensorEventListener" on onPause(); and register again onResume();
+ * 
  * 		v1.2.3, by Guangwei.Jiang@Jan13'14
  * 		1. Continue fine tune the Shake feature;
  * 
@@ -76,9 +81,9 @@ public class MainActivity extends Activity {
     /// TimeInterval时间间隔内，两次G值均超gravityThreshold，则执行开关灯动作；
     private int TimeInterval = 100;  
     // 执行完开关灯动作后，等待TimeDebunce (ms) 后，方可进入下一次G值等待判断；
-    private int TimeDebunce = 2000;
+    private int TimeDebunce = 1000;
     // 重力加速度阀值
-    private int gravityThreshold = 14;
+    private int gravityThreshold = 18;
     
     private SensorManager mSensorManager;      
     private Vibrator mVibrator;
@@ -100,16 +105,6 @@ public class MainActivity extends Activity {
         if (mSensorManager == null) {  
             throw new UnsupportedOperationException();  
         }  
-        Sensor sensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER); 
-        if (sensor == null) {  
-            throw new UnsupportedOperationException();  
-        }  
-        boolean success = mSensorManager.registerListener(mySensorEventListener, sensor,SensorManager.SENSOR_DELAY_GAME);
-        if (!success) {  
-            throw new UnsupportedOperationException();  
-        }else{
-        	System.out.println("Register Listener sucess");
-        }
         
         mVibrator = (Vibrator) getApplication().getSystemService(Context.VIBRATOR_SERVICE);
                         
@@ -202,12 +197,27 @@ public class MainActivity extends Activity {
     
     @Override  
     protected void onResume() {  
-        super.onResume(); 
+        super.onResume();         
+
+        Sensor sensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER); 
+        if (sensor == null) {  
+            throw new UnsupportedOperationException();  
+        }  
+        boolean success = mSensorManager.registerListener(mySensorEventListener, sensor,SensorManager.SENSOR_DELAY_GAME);
+        if (!success) {  
+            throw new UnsupportedOperationException();  
+        }else{
+        	System.out.println("Register Listener sucess");
+        }
     }
     
     @Override  
     protected void onPause() {  
         super.onPause(); 
+        
+    	if (mSensorManager != null) {
+    		mSensorManager.unregisterListener(mySensorEventListener);
+    	}
     }
     
     @Override 
@@ -346,7 +356,7 @@ public class MainActivity extends Activity {
 						}
 						lastTime = curTime + TimeDebunce;
 					} else {
-					lastTime = curTime;
+						lastTime = curTime;
 					}
 				}
 			}
