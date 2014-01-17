@@ -14,6 +14,9 @@
  * 		
  * 
  * Notes:
+ * 		v1.2.5, by Guangwei.Jiang@Jan17'14
+ * 		1. Replace the launcher icon;
+ * 
  * 		v1.2.4, by Guangwei.Jiang@Jan14'14
  * 		1. Fine tune "gravityThreshold" value to 18;
  * 		2. Fine tune "TimeDebunce" to 1000ms;
