@@ -110,23 +110,6 @@ public class MainActivity extends Activity {
         }  
         
         mVibrator = (Vibrator) getApplication().getSystemService(Context.VIBRATOR_SERVICE);
-                        
-        if (bFlashState) {
-        	turnLightOn(camera);
-        	if (bEnableShake) {
-        		textFlashState.setText(R.string.flash_off_shake);
-        	} else {
-        		textFlashState.setText(R.string.flash_off);
-        	}        	
-        }
-        else {
-        	turnLightOff(camera);
-        	if (bEnableShake) {
-        		textFlashState.setText(R.string.flash_open_shake);
-        	} else {
-        		textFlashState.setText(R.string.flash_open);
-        	} 
-        }
         
         /*textFlashState.setOnClickListener(new TextView.OnClickListener()
         {
@@ -211,6 +194,30 @@ public class MainActivity extends Activity {
             throw new UnsupportedOperationException();  
         }else{
         	System.out.println("Register Listener sucess");
+        }   
+
+        
+        // If bFlashState is true, then doesn't read the Perf data;
+        // If bFlashState is false, then read Perf data again!
+        if (!bFlashState) {
+        	restorePrefs();  
+        }
+        
+        if (bFlashState) {
+        	turnLightOn(camera);
+        	if (bEnableShake) {
+        		textFlashState.setText(R.string.flash_off_shake);
+        	} else {
+        		textFlashState.setText(R.string.flash_off);
+        	}        	
+        }
+        else {
+        	turnLightOff(camera);
+        	if (bEnableShake) {
+        		textFlashState.setText(R.string.flash_open_shake);
+        	} else {
+        		textFlashState.setText(R.string.flash_open);
+        	} 
         }
     }
     
