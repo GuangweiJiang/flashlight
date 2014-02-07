@@ -228,6 +228,12 @@ public class MainActivity extends Activity {
     	if (mSensorManager != null) {
     		mSensorManager.unregisterListener(mySensorEventListener);
     	}
+    	
+    	// If flash is off and go to background, then kill this process.
+    	if (!bFlashState) {
+    		// Terminate the current process  
+            android.os.Process.killProcess(android.os.Process.myPid());
+    	}
     }
     
     @Override 
