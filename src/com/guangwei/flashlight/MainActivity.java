@@ -14,6 +14,19 @@
  * 		
  * 
  * Notes:
+ * 		v1.2.8, by Guangwei.Jiang@Feb10'14
+ * 		1. Turn on flash light by default.
+ * 
+ * 		v1.2.7, by Guangwei.Jiang@Feb07'14
+ * 		1. 修正v1.2.6带来的“解锁后意外打开手电筒”的issue。
+ * 
+ * 		v1.2.6, by Guangwei.Jiang@Feb06'14
+ * 		1. 修正issue: 有时手电筒不亮。
+ * 			复制步骤：
+ * 			a. 选中“程序开启时自动打开手电”；
+ * 			b. 熄灭手电筒，按“Home”键，将程序置于后台（此时程序依然在执行）；
+ * 			c. 在桌面点击“手电筒”图标，此时手电不亮。 
+ * 
  * 		v1.2.5, by Guangwei.Jiang@Jan17'14
  * 		1. Replace the launcher icon;
  * 
@@ -332,7 +345,7 @@ public class MainActivity extends Activity {
     // Restore preferences
     private void restorePrefs() {
     	SharedPreferences settings = getSharedPreferences(PREF, 0);
-    	bEnableFlashInit = settings.getBoolean(PREF_isEnableFlashInit, false);
+    	bEnableFlashInit = settings.getBoolean(PREF_isEnableFlashInit, true);
     	bEnableShake = settings.getBoolean(PREF_isEnableShake, false);
     	bFlashState = bEnableFlashInit;
     	checkboxEnableFlashInit.setChecked(bEnableFlashInit);
