@@ -14,6 +14,9 @@
  * 		
  * 
  * Notes:
+ * 		v1.2.9, by Guangwei.Jiang@Feb11'14
+ * 		1. Add feature to adjust Meizu torch brightness (don't support all of Serial, such as MX3);
+ * 
  * 		v1.2.8, by Guangwei.Jiang@Feb10'14
  * 		1. Turn on flash light by default.
  * 
@@ -54,6 +57,10 @@
 
 package com.guangwei.flashlight;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.List;
 
 import android.hardware.Camera;
@@ -79,13 +86,15 @@ import android.widget.TextView;
 public class MainActivity extends Activity {
 	
 	private static final String TAG = "FlashLight";
-	public static final String PREF = "flashlight_pref";
-	public static final String PREF_isEnableFlashInit = "isEnableFlashInit";
-	public static final String PREF_isEnableShake = "isEnableShake";
+	private static final String PREF = "flashlight_pref";
+	private static final String PREF_isEnableFlashInit = "isEnableFlashInit";
+	private static final String PREF_isEnableShake = "isEnableShake";
+	private static final String PREF_TorchBrightnessLevel = "TorchBrightnessLevel";
 	private Camera camera = null;
 	private boolean bFlashState = false;
 	private boolean bEnableFlashInit = false;
 	private boolean bEnableShake = false;
+	private int TorchBrightnessLevel = 0;
 	
 	private TextView textFlashState = null;
 	private CheckBox checkboxEnableFlashInit = null;
@@ -288,7 +297,7 @@ public class MainActivity extends Activity {
     	return super.onTouchEvent(event);
     }
     
-	public static void turnLightOn(Camera mCamera) {
+	public void turnLightOn(Camera mCamera) {
 		try{
 			if (mCamera == null) {
 				return;
@@ -309,13 +318,15 @@ public class MainActivity extends Activity {
 				if (flashModes.contains(Parameters.FLASH_MODE_TORCH)) {
 					parameters.setFlashMode(Parameters.FLASH_MODE_TORCH);
 					mCamera.setParameters(parameters);
+					
+					restoreMeizuTorchBrightLevel();
 				} else {
 				}
 			}
 		} catch(Exception ex){}
 	}
 	
-	public static void turnLightOff(Camera mCamera) {
+	public void turnLightOff(Camera mCamera) {
 		try{
 			if (mCamera == null) {
 				return;
@@ -331,10 +342,13 @@ public class MainActivity extends Activity {
 				return;
 			}
 			if (!Parameters.FLASH_MODE_OFF.equals(flashMode)) {
+				saveMeizuTorchBrightLevel();
+				
 				// Turn off the flash
 				if (flashModes.contains(Parameters.FLASH_MODE_OFF)) {
 					parameters.setFlashMode(Parameters.FLASH_MODE_OFF);
 					mCamera.setParameters(parameters);
+					
 				} else {
 					Log.e(TAG, "FLASH_MODE_OFF not supported");
 				}
@@ -350,6 +364,7 @@ public class MainActivity extends Activity {
     	bFlashState = bEnableFlashInit;
     	checkboxEnableFlashInit.setChecked(bEnableFlashInit);
     	checkboxEnableShake.setChecked(bEnableShake);
+    	TorchBrightnessLevel = settings.getInt(PREF_TorchBrightnessLevel, 15);
     }
     
     public final SensorEventListener mySensorEventListener = new SensorEventListener() {
@@ -391,4 +406,56 @@ public class MainActivity extends Activity {
 			}
 		}    	
     };
+    
+    private void CmdExec(String[] cmd) {    	
+    	try {
+    		Process proc = Runtime.getRuntime().exec(cmd);
+    		proc.waitFor();
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    	}
+    }
+    
+    private String CmdExec(String cmd) {
+    	String result = "";
+    	
+    	try {
+    		Process proc = Runtime.getRuntime().exec(cmd);
+			InputStream in = proc.getInputStream();
+    		BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+    		result = reader.readLine();
+    		reader.close();
+    		in.close();
+    		proc.waitFor();
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    	}
+    	
+    	Log.v(TAG, result);
+    	return result;
+    }
+    
+    private void saveMeizuTorchBrightLevel() {
+		String cmd = "cat /sys/class/leds/torch_led/brightness";
+		String brightness = CmdExec(cmd);
+		
+		SharedPreferences settings = getSharedPreferences(PREF, 0);
+		settings.edit().putInt(PREF_TorchBrightnessLevel, Integer.parseInt(brightness)).commit();
+		
+    }
+    
+    private void restoreMeizuTorchBrightLevel() {
+    	SharedPreferences settings = getSharedPreferences(PREF, 0);
+    	TorchBrightnessLevel = settings.getInt(PREF_TorchBrightnessLevel, 15);
+    	
+    	if (TorchBrightnessLevel > 105) {
+    		TorchBrightnessLevel = 105;
+    	} else if (TorchBrightnessLevel <= 0) {
+    		TorchBrightnessLevel = 15;
+    	}
+    	
+    	String cmd[] = { "/system/bin/sh", "-c", "echo " + Integer.toString(TorchBrightnessLevel) + " > /sys/class/leds/torch_led/brightness"};
+		CmdExec(cmd);
+    }
+	
 }
