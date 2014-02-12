@@ -118,7 +118,7 @@ public class MainActivity extends Activity {
     private SensorManager mSensorManager;      
     private Vibrator mVibrator;
     
-    private boolean bTorchNodewritable = false;
+    private boolean bTorchNodewritable = true;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -427,14 +427,21 @@ public class MainActivity extends Activity {
 		}    	
     };
     
-    private void CmdExec(String[] cmd) {    	
+    private void CmdExec(String[] cmd) {
+    	String result = "";
     	try {
     		Process proc = Runtime.getRuntime().exec(cmd);
+    		InputStream in = proc.getErrorStream();
+			BufferedReader mReader = new BufferedReader(new InputStreamReader(in));
+			while ((result = mReader.readLine()) != null) {
+	    		Log.e(TAG, result);
+				bTorchNodewritable = false;
+			}
+			mReader.close();
+			in.close();
     		proc.waitFor();
-    		bTorchNodewritable = true;
     	} catch (Exception e) {
-    		e.printStackTrace();
-    		bTorchNodewritable = false;
+    		e.printStackTrace();    		
     	}
     }
     
