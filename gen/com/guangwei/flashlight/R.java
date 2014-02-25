@@ -27,7 +27,7 @@ public final class R {
         public static final int ic_launcher=0x7f020000;
     }
     public static final class id {
-        public static final int action_settings=0x7f090006;
+        public static final int action_comments=0x7f090006;
         public static final int checkBoxEnableFlashInit=0x7f090002;
         public static final int checkBoxEnableShake=0x7f090003;
         public static final int textView1=0x7f090000;
@@ -42,6 +42,8 @@ public final class R {
         public static final int main=0x7f080000;
     }
     public static final class string {
+        public static final int action_comments=0x7f05000c;
+        public static final int action_quit=0x7f05000d;
         public static final int action_settings=0x7f050001;
         public static final int app_name=0x7f050000;
         public static final int app_ver=0x7f050007;

@@ -11,9 +11,16 @@
  * 		Guangwei.Jiang, Jan07'14
  * 
  * Modify History:
+ * 
  * 		
  * 
  * Notes:
+ * 		v1.2.12, by Guangwei.Jjiang@Feb25'14
+ * 		1. Add "comments" and "quit" in the menu;
+ * 
+ * 		v1.2.11, by Guangwei.Jiang@Feb12'14
+ * 		1. Fix can't detect Torch brightness node permission issue, which cause MX3 can't turn on flash!
+ * 
  * 		v1.2.10, by Guangwei.Jiang@Feb12'14
  * 		1. Check if the torch brightness node is writable or not,
  * 			if writable, then operate by the node;
@@ -74,14 +81,17 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.Window;
 import android.widget.CheckBox;
@@ -119,6 +129,9 @@ public class MainActivity extends Activity {
     private Vibrator mVibrator;
     
     private boolean bTorchNodewritable = true;
+    
+    private final int MENU_COMMENTS = Menu.FIRST;
+    private final int MENU_QUIT = Menu.FIRST+1;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -211,7 +224,26 @@ public class MainActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         //getMenuInflater().inflate(R.menu.main, menu);
+    	menu.add(Menu.NONE, MENU_COMMENTS, 0, R.string.action_comments);
+    	menu.add(Menu.NONE, MENU_QUIT, 0, R.string.action_quit);
         return true;
+    }
+    
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+    	super.onOptionsItemSelected(item);
+    	switch(item.getItemId())
+    	{
+    	case MENU_COMMENTS:
+    		Uri uri = null;
+    		uri = Uri.parse("mstore:http://app.meizu.com/phone/apps/abfd9fa1f4a24e238b0db26a67a006ad");
+    		startActivity(new Intent("android.intent.action.VIEW", uri));
+    		break;
+    	case MENU_QUIT:
+    		quit();
+    		break;
+    	}
+		return true;    	
     }
     
     @Override  
@@ -264,22 +296,15 @@ public class MainActivity extends Activity {
     	
     	// If flash is off and go to background, then kill this process.
     	if (!bFlashState) {
-    		// Terminate the current process  
-            android.os.Process.killProcess(android.os.Process.myPid());
+    		quit();
     	}
     }
-    
+        
     @Override 
     public boolean onKeyDown(int keyCode,KeyEvent event) {  
     	// check if it's "back" button  
-    	if (keyCode == KeyEvent.KEYCODE_BACK) {  
-    		super.onDestroy();
-        	turnLightOff(camera);
-        	if (mSensorManager != null) {
-        		mSensorManager.unregisterListener(mySensorEventListener);
-        	}
-        	// Terminate the current process  
-            android.os.Process.killProcess(android.os.Process.myPid());  
+    	if (keyCode == KeyEvent.KEYCODE_BACK) { 
+        	quit(); 
         	return true;
     	} else if (bTorchNodewritable && (keyCode == KeyEvent.KEYCODE_VOLUME_UP)) {
     		increaseMeizuTorchBrightLevel();
@@ -312,6 +337,16 @@ public class MainActivity extends Activity {
     		break;
     	}
     	return super.onTouchEvent(event);
+    }    
+
+    private void quit() { 
+		super.onDestroy();
+    	turnLightOff(camera);
+    	if (mSensorManager != null) {
+    		mSensorManager.unregisterListener(mySensorEventListener);
+    	}
+    	// Terminate the current process  
+        android.os.Process.killProcess(android.os.Process.myPid());  
     }
     
 	public void turnLightOn(Camera mCamera) {

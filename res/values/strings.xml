@@ -8,11 +8,13 @@
     <string name="flash_open">点击打开</string>
     <string name="flash_off">点击关闭</string>
     <string name="enable_flashlight">程序开启时自动打开手电</string>
-    <string name="app_ver">1.2.11</string>
+    <string name="app_ver">1.2.12</string>
     <string name="enable_shake_trim">摇一摇触发手电开关</string>
     <color name="red">#FF0000</color>
     <string name="ver_string">ver:</string>
     <string name="flash_open_shake">摇一摇打开</string>
     <string name="flash_off_shake">摇一摇关闭</string>
+    <string name="action_comments">五分好评</string>
+    <string name="action_quit">退出</string>
 
 </resources>
